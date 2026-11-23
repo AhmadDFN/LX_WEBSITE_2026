@@ -20,6 +20,12 @@ Route::post('/matches/{id}/rsvp', [MatchController::class, 'rsvp'])->name('match
 Route::get('/join-squad', [RecruitmentController::class, 'create'])->name('join.squad');
 Route::post('/join-squad', [RecruitmentController::class, 'store'])->name('join.squad.store');
 
+// Tactical Tools / 20v20 Draft & Randomizer
+Route::get('/tools/randomizer', function () {
+    return view('tools.randomizer');
+})->name('tools.randomizer');
+Route::redirect('/draft-randomizer', '/tools/randomizer');
+
 // Guest Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

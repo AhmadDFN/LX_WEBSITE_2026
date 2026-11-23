@@ -139,6 +139,12 @@
             >
                 Join Squad
             </a>
+            <a
+                href="{{ route('tools.randomizer') }}"
+                class="hover:text-yellow-400 text-yellow-400/90 font-semibold transition-colors duration-300 {{ request()->routeIs('tools.randomizer') ? 'text-yellow-400 border-b border-yellow-400' : '' }}"
+            >
+                Draft 20v20
+            </a>
             @auth
                 @if(in_array(Auth::user()->role, ['superadmin', 'manager', 'coach']))
                 <a
@@ -190,6 +196,7 @@
             <a href="{{ route('roster') }}" class="block text-xs font-bold uppercase tracking-[0.2em] {{ request()->routeIs('roster*') ? 'text-cyan-400' : 'text-zinc-300' }}">Roster</a>
             <a href="{{ route('matches') }}" class="block text-xs font-bold uppercase tracking-[0.2em] {{ request()->routeIs('matches*') ? 'text-cyan-400' : 'text-zinc-300' }}">Matches</a>
             <a href="{{ route('join.squad') }}" class="block text-xs font-bold uppercase tracking-[0.2em] {{ request()->routeIs('join.squad*') ? 'text-cyan-400' : 'text-zinc-300' }}">Join Squad</a>
+            <a href="{{ route('tools.randomizer') }}" class="block text-xs font-bold uppercase tracking-[0.2em] text-yellow-400">Draft 20v20</a>
             @auth
                 <div class="pt-3 border-t border-white/10 flex items-center justify-between">
                     <a href="{{ route('dashboard') }}" class="text-xs text-yellow-400 font-bold uppercase tracking-wider">Dashboard</a>
