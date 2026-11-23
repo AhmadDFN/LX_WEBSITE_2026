@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             GameModeSeeder::class,
             LuxuryEliteRosterSeeder::class,
+            AdminUserSeeder::class,
+            TournamentSeeder::class,
         ]);
     }
 }

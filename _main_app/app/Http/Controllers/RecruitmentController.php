@@ -35,7 +35,7 @@ class RecruitmentController extends Controller
             $proofPath = $request->file('proof_screenshot')->store('recruitment', 'public');
         }
 
-        RecruitmentApplication::create([
+        $application = RecruitmentApplication::create([
             'full_name' => $validated['full_name'],
             'ign' => $validated['ign'],
             'delta_force_uid' => $validated['delta_force_uid'],
@@ -46,6 +46,9 @@ class RecruitmentController extends Controller
             'proof_screenshot' => $proofPath,
             'status' => 'pending',
         ]);
+
+        // Send instant notification to Discord Staff channel
+        \App\Services\DiscordWebhookService::notifyNewRecruitment($application);
 
         return redirect()->route('join.squad')->with('status', [
             'type' => 'success',

@@ -137,6 +137,54 @@ class ManagementController extends Controller
         ]);
     }
 
+    public function assignSquad(Request $request, int $id): RedirectResponse
+    {
+        $player = PlayerProfile::findOrFail($id);
+
+        $validated = $request->validate([
+            'squad_id' => ['required', 'exists:squads,id'],
+            'slot_type' => ['required', 'in:starter,substitute,reserve,standin'],
+            'sub_team_number' => ['nullable', 'integer', 'min:1', 'max:5'],
+            'role_specialization' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        SquadMember::updateOrCreate(
+            [
+                'squad_id' => $validated['squad_id'],
+                'player_profile_id' => $player->id,
+            ],
+            [
+                'slot_type' => $validated['slot_type'],
+                'sub_team_number' => $validated['sub_team_number'] ?? null,
+                'role_specialization' => $validated['role_specialization'] ?? 'Infantry Combatant',
+            ]
+        );
+
+        $squad = Squad::find($validated['squad_id']);
+
+        return redirect()->route('management.players.index')->with('status', [
+            'type' => 'success',
+            'code' => 'SQUAD_ALLOCATED',
+            'message' => "Player {$player->ign} assigned to {$squad->squad_name} as {$validated['slot_type']}.",
+        ]);
+    }
+
+    public function promoteTrial(int $id): RedirectResponse
+    {
+        $player = PlayerProfile::findOrFail($id);
+
+        $player->update([
+            'player_type' => 'competitive',
+            'status' => 'active',
+        ]);
+
+        return redirect()->route('management.players.index')->with('status', [
+            'type' => 'success',
+            'code' => 'OPERATOR_PROMOTED',
+            'message' => "Congratulations! {$player->ign} has been officially promoted to the Competitive Core Roster.",
+        ]);
+    }
+
     /**
      * 2. MANAGEMENT SCRIM
      */
@@ -202,6 +250,9 @@ class ManagementController extends Controller
             'notes' => $validated['notes'] ?? null,
         ]);
 
+        // Dispatch Discord Announcement Webhook
+        \App\Services\DiscordWebhookService::notifyScrimScheduled($scrim);
+
         return redirect()->route('management.scrims.index')->with('status', [
             'type' => 'success',
             'code' => 'ENGAGEMENT_SCHEDULED',
@@ -258,9 +309,16 @@ class ManagementController extends Controller
             'maps_played' => ['nullable', 'string'], // JSON string or text
             'vod_url' => ['nullable', 'url', 'max:255'],
             'screenshot_url' => ['nullable', 'string', 'max:255'],
+            'screenshot_file' => ['nullable', 'image', 'max:5120'], // Max 5MB image
             'mvp_player_id' => ['nullable', 'exists:player_profiles,id'],
             'coach_notes' => ['nullable', 'string'],
         ]);
+
+        $screenshotPath = $validated['screenshot_url'] ?? null;
+        if ($request->hasFile('screenshot_file')) {
+            $path = $request->file('screenshot_file')->store('match-proofs', 'public');
+            $screenshotPath = asset('storage/' . $path);
+        }
 
         // Process maps played if JSON or structured text
         $mapsArray = null;
@@ -277,7 +335,7 @@ class ManagementController extends Controller
                 'result' => $validated['result'],
                 'maps_played' => $mapsArray,
                 'vod_url' => $validated['vod_url'] ?? null,
-                'screenshot_url' => $validated['screenshot_url'] ?? null,
+                'screenshot_url' => $screenshotPath,
                 'mvp_player_id' => $validated['mvp_player_id'] ?? null,
                 'coach_notes' => $validated['coach_notes'] ?? null,
             ]
@@ -425,6 +483,10 @@ class ManagementController extends Controller
         ]);
 
         $match->update($validated);
+
+        if ($validated['status'] === 'won') {
+            \App\Services\DiscordWebhookService::notifyTournamentVictory($match);
+        }
 
         return redirect()->back()->with('status', [
             'type' => 'success',

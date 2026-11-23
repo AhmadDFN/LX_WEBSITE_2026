@@ -15,6 +15,7 @@ Route::get('/roster', [RosterController::class, 'index'])->name('roster');
 Route::get('/matches', [MatchController::class, 'index'])->name('matches');
 Route::get('/matches/{id}', [MatchController::class, 'show'])->name('matches.show');
 Route::post('/matches/{id}/rsvp', [MatchController::class, 'rsvp'])->name('matches.rsvp');
+Route::get('/trophies', [HomeController::class, 'trophies'])->name('trophies');
 
 // Recruitment ("Join Squad")
 Route::get('/join-squad', [RecruitmentController::class, 'create'])->name('join.squad');
@@ -48,6 +49,8 @@ Route::middleware('auth')->group(function () {
             // 1. Management Player
             Route::get('/players', [ManagementController::class, 'playersIndex'])->name('players.index');
             Route::post('/players/{id}/update', [ManagementController::class, 'updatePlayer'])->name('players.update');
+            Route::post('/players/{id}/assign-squad', [ManagementController::class, 'assignSquad'])->name('players.assignSquad');
+            Route::post('/players/{id}/promote-trial', [ManagementController::class, 'promoteTrial'])->name('players.promoteTrial');
             Route::post('/users/{id}/update-role', [ManagementController::class, 'updateUserRole'])->name('users.updateRole');
 
             // 2. Management Scrim

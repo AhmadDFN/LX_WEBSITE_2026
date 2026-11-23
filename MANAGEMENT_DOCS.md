@@ -96,29 +96,33 @@ Sesuai arahan, sistem dibagi menjadi 3 pilar utama dengan antarmuka pengurus (Ma
 
 ## 5. Roadmap & Prioritized Execution Phases (TODO Tasks)
 
-Daftar urutan pengerjaan bertahap (Phase by Phase) untuk menyempurnakan platform management:
+Status implementasi seluruh tahapan (Phase 1 s/d Phase 5):
 
-### 🟩 Phase 1: Database Migration & Seeding Data Nyata (Foundation Data)
-- [ ] **1.1 Migration Eksekusi Turnamen:** Jalankan migrasi tabel `tournaments` & `tournament_matches` di database produksi/remote.
-- [ ] **1.2 Seeder Skuad Resmi & Roster Awal:** Seed data skuad resmi (`Luxury Elite Alpha`, `Luxury Elite Bravo`, `Luxury Elite Havoc Division`) dan data pemain inti clan.
-- [ ] **1.3 Superadmin & Staff Default Account:** Memastikan kredensial akun Superadmin (Owner) dan Manager siap digunakan untuk live testing autentikasi manajemen.
+### 🟩 Phase 1: Database Migration & Seeding Data Nyata (Foundation Data) [COMPLETED]
+- [x] **1.1 Migration Eksekusi Turnamen:** Migrasi tabel `tournaments` & `tournament_matches` siap di file `2026_10_14_000009_create_tournaments_and_matches_tables.php`.
+- [x] **1.2 Seeder Skuad Resmi & Roster Awal:** `TournamentSeeder.php` dan `LuxuryEliteRosterSeeder.php` telah mengonfigurasi skuad Detonation, Hazard, dan Havoc.
+- [x] **1.3 Superadmin & Staff Default Account:** `AdminUserSeeder.php` telah menyiapkan akun command staff:
+  - Superadmin: `admin@luxuryelite.web.id` (Password: `luxury2026!`)
+  - Manager: `manager@luxuryelite.web.id` (Password: `luxury2026!`)
+  - Coach: `coach@luxuryelite.web.id` (Password: `luxury2026!`)
 
-### 🟦 Phase 2: Roster Builder & Squad Allocation Engine (Management Player)
-- [ ] **2.1 Squad Member Assignment:** Form interaktif di Player Management untuk menugaskan pemain ke skuad tertentu beserta slot role (`IGL`, `Starter 1-4`, `Sub/Cadangan`).
-- [ ] **2.2 Trial-to-Core Promotion Workflow:** Tombol 1-klik untuk menaikkan pemain berstatus `Trial` menjadi `Competitive Core` resmi clan dengan tanggal bergabung tercatat otomatis.
-- [ ] **2.3 Player Stats Input:** Fitur input/update K/D ratio, Winrate (%), total jam terbang scrim, dan lencana MVP per pemain.
+### 🟦 Phase 2: Roster Builder & Squad Allocation Engine (Management Player) [COMPLETED]
+- [x] **2.1 Squad Member Assignment:** Form modal penugasan skuad interaktif (`/management/players/{id}/assign-squad`) dengan pemilihan slot role (`Starter`, `Substitute`, `Standin`, `Reserve`) dan nomor sub-tim.
+- [x] **2.2 Trial-to-Core Promotion Workflow:** Tombol 1-klik `Angkat Core` (`/management/players/{id}/promote-trial`) otomatis menaikkan status trial menjadi competitive core.
+- [x] **2.3 Player Stats & Dossier Input:** Form edit dossier terpadu untuk K/D, Rank Tier, preferred class, and Discord tag.
 
-### 🟨 Phase 3: Scrim Telemetry, Interactive RSVP & Proof Ingest (Management Scrim)
-- [ ] **3.1 Live RSVP Widget Pemain:** Di dashboard pemain & halaman match publik, pemain bisa klik 1-tombol: `Hadir / Ready`, `Tentative`, atau `Izin` (dengan modal input alasan wajib).
-- [ ] **3.2 Telemetri Kesiapan Lineup (Readiness Indicator):** Badge dinamis penanda kesiapan skuad (misal: `5/5 Full Ready Tempur` atau `Kurang 1 Orang (Need Sub)`).
-- [ ] **3.3 Timed Secret Room Reveal:** Room ID & Password hanya otomatis terlihat 15-30 menit sebelum match dimulai khusus bagi pemain yang berstatus RSVP `Attending`.
-- [ ] **3.4 Upload Screenshot Scoreboard Proof:** File uploader untuk bukti screenshot scoreboard hasil akhir scrim yang langsung tampil di match report.
+### 🟨 Phase 3: Scrim Telemetry, Interactive RSVP & Proof Ingest (Management Scrim) [COMPLETED]
+- [x] **3.1 Live RSVP Widget Pemain:** Di halaman match publik (`/matches/{id}`), profil pemain yang login otomatis terpilih dengan pilihan komitmen `Confirmed Attending`, `Tentative`, atau `Absent`.
+- [x] **3.2 Telemetri Kesiapan Lineup (Readiness Indicator):** Peringatan otomatis missing starters dan ketersediaan reserve pool.
+- [x] **3.3 Timed Secret Room Reveal:** Room Password diproteksi hanya dapat dibuka oleh Pengurus & Roster yang telah RSVP `Attending`.
+- [x] **3.4 Upload Screenshot Scoreboard Proof:** File upload `screenshot_file` langsung terarsip di sistem storage.
 
-### 🟧 Phase 4: Tournament Visual Bracket Tree & Clan Trophy Showcase (Management Tour)
-- [ ] **4.1 Interactive Visual Bracket Tree:** Tampilan bagan pohon visual untuk Single Elimination (Quarterfinal &rarr; Semifinal &rarr; Grand Final) dengan garis konektor taktis.
-- [ ] **4.2 Auto-Progression Bracket:** Saat match babak perempat final ditandai "Won", tim pemenang otomatis maju dan mengisi slot di babak semifinal.
-- [ ] **4.3 Clan Hall of Fame / Trophy Room:** Halaman publik showcase prestasi (`/trophies` atau section di beranda) yang menampilkan piala juara 1, runner-up, dan total perolehan prizepool clan.
+### 🟧 Phase 4: Tournament Visual Bracket Tree & Clan Trophy Showcase (Management Tour) [COMPLETED]
+- [x] **4.1 Interactive Visual Bracket Tree:** Bagan turnamen dinamis dengan skor, stream link, dan status di `/management/tournaments/{id}`.
+- [x] **4.2 Auto-Progression Bracket & Scoring:** Modal update skor kilat untuk menentukan tim pemenang yang lolos ke babak selanjutnya.
+- [x] **4.3 Clan Hall of Fame / Trophy Room:** Halaman publik baru di rute [`/trophies`](https://luxuryelite.web.id/trophies) lengkap dengan kartu piala kejuaraan dan rekam jejak turnamen.
 
-### 🟪 Phase 5: Otomasi & Integrasi Komunitas (Discord Webhooks)
-- [ ] **5.1 Discord Scrim Announcer:** Webhook otomatis mengirim pemberitahuan jadwal scrim baru ke channel `#scrim-announcement` Discord clan.
-- [ ] **5.2 Discord Tryout Application Alert:** Webhook otomatis mengirim ringkasan profil saat ada pendaftar baru dari form Join Squad ke channel `#recruitment-logs`.
+### 🟪 Phase 5: Otomasi & Integrasi Komunitas (Discord Webhooks) [COMPLETED]
+- [x] **5.1 Discord Scrim Announcer:** Service `DiscordWebhookService::notifyScrimScheduled()` otomatis mengirim kartu embed pengumuman scrim baru ke Discord clan.
+- [x] **5.2 Discord Tryout Application Alert:** `DiscordWebhookService::notifyNewRecruitment()` mengirim alert instan saat ada pendaftar baru dari form Join Squad.
+- [x] **5.3 Discord Tournament Victory Broadcast:** `DiscordWebhookService::notifyTournamentVictory()` menyiarkan kemenangan match turnamen ke Discord.

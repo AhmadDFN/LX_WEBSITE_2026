@@ -7,6 +7,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8" x-data="{
     editModalOpen: false,
     roleModalOpen: false,
+    squadModalOpen: false,
     selectedPlayer: null,
     selectedUser: null,
     openEdit(player) {
@@ -16,6 +17,10 @@
     openRole(user) {
         this.selectedUser = user;
         this.roleModalOpen = true;
+    },
+    openSquad(player) {
+        this.selectedPlayer = player;
+        this.squadModalOpen = true;
     }
 }">
     @include('management.partials.nav')
@@ -71,7 +76,7 @@
                         <th class="py-3.5 px-4">Operator / IGN</th>
                         <th class="py-3.5 px-4">Delta Force UID</th>
                         <th class="py-3.5 px-4">Preferred Class</th>
-                        <th class="py-3.5 px-4">Rank Tier</th>
+                        <th class="py-3.5 px-4">Squad Allocation</th>
                         <th class="py-3.5 px-4">Roster Status</th>
                         <th class="py-3.5 px-4">Command Role</th>
                         <th class="py-3.5 px-4 text-right">Actions</th>
@@ -116,19 +121,37 @@
 
                         <!-- Class -->
                         <td class="py-3.5 px-4">
-                            <span class="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider
-                                @if($player->preferred_class === 'assault') bg-red-500/15 text-red-400 border border-red-500/30
-                                @elseif($player->preferred_class === 'engineer') bg-amber-500/15 text-amber-400 border border-amber-500/30
-                                @elseif($player->preferred_class === 'support') bg-emerald-500/15 text-emerald-400 border border-emerald-500/30
-                                @else bg-cyan-500/15 text-cyan-400 border border-cyan-500/30
-                                @endif">
-                                {{ $player->preferred_class }}
-                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider
+                                    @if($player->preferred_class === 'assault') bg-red-500/15 text-red-400 border border-red-500/30
+                                    @elseif($player->preferred_class === 'engineer') bg-amber-500/15 text-amber-400 border border-amber-500/30
+                                    @elseif($player->preferred_class === 'support') bg-emerald-500/15 text-emerald-400 border border-emerald-500/30
+                                    @else bg-cyan-500/15 text-cyan-400 border border-cyan-500/30
+                                    @endif">
+                                    {{ $player->preferred_class }}
+                                </span>
+                                <span class="font-bold text-yellow-400 text-[11px]">
+                                    {{ $player->rank_tier ?? 'Pinnacle' }}
+                                </span>
+                            </div>
                         </td>
 
-                        <!-- Rank Tier -->
-                        <td class="py-3.5 px-4 font-bold text-yellow-400">
-                            {{ $player->rank_tier ?? 'Pinnacle' }}
+                        <!-- Squad Allocation -->
+                        <td class="py-3.5 px-4">
+                            @if($player->squads->isNotEmpty())
+                                @php $sq = $player->squads->first(); @endphp
+                                <div class="text-white font-bold text-xs font-sans">
+                                    {{ $sq->squad_name }}
+                                </div>
+                                <div class="text-[10px] text-zinc-400 flex items-center gap-1 mt-0.5">
+                                    <span class="px-1.5 py-0.2 rounded bg-zinc-800 text-yellow-400 uppercase font-mono font-semibold">
+                                        {{ $sq->pivot->slot_type ?? 'Starter' }}
+                                    </span>
+                                    <span>{{ $sq->pivot->role_specialization ?? '' }}</span>
+                                </div>
+                            @else
+                                <span class="text-zinc-500 text-[11px] italic">Belum Ada Skuad</span>
+                            @endif
                         </td>
 
                         <!-- Status / Type -->
@@ -161,9 +184,22 @@
                         </td>
 
                         <!-- Actions -->
-                        <td class="py-3.5 px-4 text-right space-x-2">
-                            <button @click="openEdit({{ json_encode($player) }})" class="px-3 py-1 rounded bg-zinc-800 hover:bg-yellow-500 hover:text-black text-zinc-300 font-bold transition text-[11px]">
-                                Edit Dossier
+                        <td class="py-3.5 px-4 text-right space-x-1.5">
+                            @if($player->player_type === 'trial')
+                            <form action="{{ route('management.players.promoteTrial', $player->id) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" onclick="return confirm('Promote {{ $player->ign }} menjadi Competitive Core Roster resmi?')" class="px-2.5 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500 hover:text-black text-emerald-400 border border-emerald-500/30 font-bold transition text-[11px]" title="Promote Trial to Competitive Core">
+                                    <i class="fa-solid fa-arrow-up"></i> Angkat Core
+                                </button>
+                            </form>
+                            @endif
+
+                            <button @click="openSquad({{ json_encode($player) }})" class="px-2.5 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-yellow-400 font-bold transition text-[11px]" title="Tugaskan ke Skuad">
+                                <i class="fa-solid fa-shield"></i> Skuad
+                            </button>
+
+                            <button @click="openEdit({{ json_encode($player) }})" class="px-2.5 py-1 rounded bg-zinc-800 hover:bg-yellow-500 hover:text-black text-zinc-300 font-bold transition text-[11px]">
+                                Edit
                             </button>
                         </td>
                     </tr>
@@ -337,6 +373,69 @@
                         </button>
                         <button type="submit" class="px-5 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-400 text-black font-bold uppercase tracking-wider transition">
                             Update Role
+                        </button>
+                    </div>
+                </form>
+            </template>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ASSIGN SQUAD ALLOCATION -->
+    <div x-show="squadModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="bg-carbon-900 border border-yellow-500/30 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl" @click.away="squadModalOpen = false">
+            <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+                <h3 class="text-lg font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-shield text-yellow-400"></i> Penugasan Skuad Taktis
+                </h3>
+                <button @click="squadModalOpen = false" class="text-zinc-400 hover:text-white text-lg">&times;</button>
+            </div>
+
+            <template x-if="selectedPlayer">
+                <form :action="'{{ url('/management/players') }}/' + selectedPlayer.id + '/assign-squad'" method="POST" class="space-y-4 text-xs font-mono">
+                    @csrf
+                    <div>
+                        <div class="text-zinc-400">OPERATOR</div>
+                        <div class="text-white text-sm font-bold mt-0.5" x-text="selectedPlayer.ign + ' (' + selectedPlayer.preferred_class.toUpperCase() + ')'"></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-zinc-400 mb-1">TARGET SKUAD <span class="text-yellow-400">*</span></label>
+                        <select name="squad_id" required class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-white focus:outline-none focus:border-yellow-400">
+                            @foreach($squads as $sq)
+                                <option value="{{ $sq->id }}">{{ $sq->squad_name }} ({{ $sq->gameMode->name ?? 'DF' }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-zinc-400 mb-1">SLOT TYPE <span class="text-yellow-400">*</span></label>
+                            <select name="slot_type" required class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-white focus:outline-none focus:border-yellow-400">
+                                <option value="starter">Starter (Lineup Utama)</option>
+                                <option value="substitute">Substitute (Cadangan)</option>
+                                <option value="reserve">Reserve (Cadangan Tambahan)</option>
+                                <option value="standin">Stand-in (Pemain Pengganti)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-zinc-400 mb-1">SUB-TEAM NO. (HAVOC)</label>
+                            <input type="number" name="sub_team_number" min="1" max="5" placeholder="1-5"
+                                class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-white focus:outline-none focus:border-yellow-400">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-zinc-400 mb-1">ROLE SPESIALISASI TAKTIS</label>
+                        <input type="text" name="role_specialization" placeholder="e.g. IGL / Captain, Entry Fragger, Anchor, Sniper"
+                            class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-white focus:outline-none focus:border-yellow-400">
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 pt-4 border-t border-zinc-800">
+                        <button type="button" @click="squadModalOpen = false" class="px-4 py-2 rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-5 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-400 text-black font-bold uppercase tracking-wider transition">
+                            Assign to Squad
                         </button>
                     </div>
                 </form>

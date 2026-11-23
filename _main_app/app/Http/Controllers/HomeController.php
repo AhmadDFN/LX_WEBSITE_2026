@@ -106,5 +106,22 @@ class HomeController extends Controller
             'players'
         ));
     }
+
+    public function trophies(): View
+    {
+        try {
+            $tournaments = \App\Models\Tournament::with(['gameMode', 'squad', 'matches'])
+                ->where(function ($q) {
+                    $q->where('status', 'completed')
+                      ->orWhereNotNull('placement');
+                })
+                ->orderByDesc('end_date')
+                ->get();
+        } catch (\Throwable $e) {
+            $tournaments = collect();
+        }
+
+        return view('trophies.index', compact('tournaments'));
+    }
 }
 

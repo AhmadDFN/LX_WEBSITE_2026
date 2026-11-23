@@ -104,12 +104,22 @@
 
             <div class="p-3.5 rounded bg-carbon-900 border border-zinc-800 flex justify-between items-center text-xs font-mono">
                 <span class="text-zinc-400 uppercase">ROOM PASSWORD:</span>
-                <div class="flex items-center space-x-2">
-                    <span class="text-white font-bold" x-text="showPass ? '{{ $match->room_password ?? 'N/A' }}' : '••••••••'">••••••••</span>
-                    <button type="button" @click="showPass = !showPass" class="text-gold-400 hover:text-gold-300 text-[10px] uppercase font-bold">
-                        <span x-text="showPass ? 'HIDE' : 'REVEAL'"></span>
-                    </button>
-                </div>
+                @php
+                    $canViewRoomKey = Auth::check() && (
+                        in_array(Auth::user()->role, ['superadmin', 'manager', 'coach']) ||
+                        ($match->attendances->where('player_profile_id', Auth::user()->playerProfile->id ?? 0)->where('status', 'attending')->isNotEmpty())
+                    );
+                @endphp
+                @if($canViewRoomKey)
+                    <div class="flex items-center space-x-2">
+                        <span class="text-yellow-400 font-bold" x-text="showPass ? '{{ $match->room_password ?? 'Belum Diatur' }}' : '••••••••'">••••••••</span>
+                        <button type="button" @click="showPass = !showPass" class="text-gold-400 hover:text-gold-300 text-[10px] uppercase font-bold">
+                            <span x-text="showPass ? 'HIDE' : 'REVEAL'"></span>
+                        </button>
+                    </div>
+                @else
+                    <span class="text-zinc-500 font-bold text-[11px]">[RESTRICTED &bull; Hadirkan RSVP]</span>
+                @endif
             </div>
         </div>
     </div>
@@ -132,7 +142,9 @@
                     <label class="block text-xs font-mono text-zinc-300 uppercase mb-1">Select Your Operator Profile</label>
                     <select name="player_profile_id" required class="w-full bg-obsidian-950 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:border-gold-500 font-sans">
                         @foreach($allPlayers as $p)
-                            <option value="{{ $p->id }}">{{ $p->ign }} ({{ $p->preferred_class }})</option>
+                            <option value="{{ $p->id }}" {{ (Auth::check() && Auth::user()->playerProfile && Auth::user()->playerProfile->id == $p->id) ? 'selected' : '' }}>
+                                {{ $p->ign }} ({{ $p->preferred_class }})
+                            </option>
                         @endforeach
                     </select>
                 </div>

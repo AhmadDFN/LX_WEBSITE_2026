@@ -131,7 +131,7 @@
             </div>
 
             <template x-if="selectedScrim">
-                <form :action="'{{ url('/management/scrims') }}/' + selectedScrim.id + '/result'" method="POST" class="space-y-4 text-xs font-mono">
+                <form :action="'{{ url('/management/scrims') }}/' + selectedScrim.id + '/result'" method="POST" enctype="multipart/form-data" class="space-y-4 text-xs font-mono">
                     @csrf
                     <div>
                         <div class="text-zinc-400">FIXTURE</div>
@@ -173,9 +173,9 @@
                                 class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-white focus:outline-none focus:border-yellow-400">
                         </div>
                         <div>
-                            <label class="block text-zinc-400 mb-1">URL SCREENSHOT SCOREBOARD</label>
-                            <input type="text" name="screenshot_url" placeholder="URL bukti screenshot"
-                                class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-white focus:outline-none focus:border-yellow-400">
+                            <label class="block text-zinc-400 mb-1">UPLOAD SCREENSHOT SCOREBOARD</label>
+                            <input type="file" name="screenshot_file" accept="image/*"
+                                class="w-full px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 text-zinc-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[11px] file:bg-zinc-800 file:text-yellow-400 hover:file:bg-zinc-700 focus:outline-none">
                         </div>
                     </div>
 

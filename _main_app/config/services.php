@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'discord' => [
+        'scrim_webhook' => env('DISCORD_SCRIM_WEBHOOK_URL'),
+        'recruitment_webhook' => env('DISCORD_RECRUITMENT_WEBHOOK_URL'),
+    ],
+
 ];

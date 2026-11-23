@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Luxury Elite - Official Website')</title>
 
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
-    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
 
     <!-- Google Fonts: Instrument Sans & Inter -->
@@ -134,6 +134,12 @@
                 Matches
             </a>
             <a
+                href="{{ route('trophies') }}"
+                class="hover:text-cyan-400 transition-colors duration-300 {{ request()->routeIs('trophies*') ? 'text-cyan-400 border-b border-cyan-400' : '' }}"
+            >
+                Trophies
+            </a>
+            <a
                 href="{{ route('join.squad') }}"
                 class="hover:text-cyan-400 transition-colors duration-300 {{ request()->routeIs('join.squad*') ? 'text-cyan-400 border-b border-cyan-400' : '' }}"
             >
@@ -195,6 +201,7 @@
             <a href="{{ route('home') }}" class="block text-xs font-bold uppercase tracking-[0.2em] {{ request()->routeIs('home') ? 'text-cyan-400' : 'text-zinc-300' }}">Home</a>
             <a href="{{ route('roster') }}" class="block text-xs font-bold uppercase tracking-[0.2em] {{ request()->routeIs('roster*') ? 'text-cyan-400' : 'text-zinc-300' }}">Roster</a>
             <a href="{{ route('matches') }}" class="block text-xs font-bold uppercase tracking-[0.2em] {{ request()->routeIs('matches*') ? 'text-cyan-400' : 'text-zinc-300' }}">Matches</a>
+            <a href="{{ route('trophies') }}" class="block text-xs font-bold uppercase tracking-[0.2em] {{ request()->routeIs('trophies*') ? 'text-cyan-400' : 'text-zinc-300' }}">Trophies</a>
             <a href="{{ route('join.squad') }}" class="block text-xs font-bold uppercase tracking-[0.2em] {{ request()->routeIs('join.squad*') ? 'text-cyan-400' : 'text-zinc-300' }}">Join Squad</a>
             <a href="{{ route('tools.randomizer') }}" class="block text-xs font-bold uppercase tracking-[0.2em] text-yellow-400">Draft 20v20</a>
             @auth
