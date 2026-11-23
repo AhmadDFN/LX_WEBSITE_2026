@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. PENGECUALIAN SUBDOMAIN
+    # Biarkan subdomain jalan sendiri, jangan diganggu.
+    RewriteCond %{REQUEST_URI} !^/_subdomains/
+
+    # 2. MENCEGAH LOOPING (PENTING)
+    # Jika request sudah masuk ke _main_app/public/, jangan diputar lagi.
+    RewriteCond %{REQUEST_URI} !^/_main_app/public/
+
+    # 3. ATURAN UTAMA (HIDDEN REDIRECT)
+    # Pindahkan semua sisa pengunjung dari namadomain.com secara tak kasat mata
+    # ke dalam folder _main_app/public/
+    RewriteRule ^(.*)$ _main_app/public/$1 [L]
+</IfModule>
