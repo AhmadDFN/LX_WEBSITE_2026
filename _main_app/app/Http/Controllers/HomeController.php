@@ -26,7 +26,6 @@ class HomeController extends Controller
                 ->first();
 
             $dbPlayers = PlayerProfile::active()
-                ->competitive()
                 ->limit(7)
                 ->get();
         } catch (\Throwable $e) {
@@ -85,11 +84,12 @@ class HomeController extends Controller
         $players = $defaultRoster;
         if (isset($dbPlayers) && $dbPlayers->isNotEmpty()) {
             $mapped = $dbPlayers->map(function ($player) {
+                $status = ($player->player_type === 'trial') ? 'Trial' : ucfirst($player->status ?? 'Active');
                 return [
                     'nickname' => $player->ign,
                     'role' => ucfirst($player->preferred_class ?? 'Operator'),
                     'image' => $player->photo_path ? asset('storage/' . $player->photo_path) : '/images/irzell.png',
-                    'status' => ucfirst($player->status ?? 'Active'),
+                    'status' => $status,
                 ];
             })->toArray();
 
