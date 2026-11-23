@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LUXURY ELITE — Delta Force 20v20 Draft & Randomizer</title>
 
+    <!-- Web Favicon & App Icons from LX Official Logo -->
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts: Rajdhani (Esports Tactical) & Inter (Clean UI) -->
+    <!-- Google Fonts: Rajdhani (Combat Esports), Plus Jakarta Sans (Modern UI), Teko (Bold Display) & JetBrains Mono (Tactical Telemetry) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Rajdhani:wght@500;600;700;800&family=Teko:wght@500;600;700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -31,14 +36,17 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Rajdhani', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
+                        display: ['Rajdhani', '"Plus Jakarta Sans"', 'sans-serif'],
+                        combat: ['Teko', 'Rajdhani', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
                     },
                     colors: {
-                        obsidian: '#090b10',
-                        panel: '#111520',
-                        card: '#161b29',
+                        obsidian: '#07090e',
+                        panel: '#0e1320',
+                        card: '#131929',
                         gold: {
+                            300: '#fef08a',
                             400: '#facc15',
                             500: '#eab308',
                             600: '#ca8a04',
@@ -56,10 +64,10 @@
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #090b10;
+            background: #07090e;
         }
         ::-webkit-scrollbar-thumb {
-            background: #2a3248;
+            background: #222c40;
             border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
@@ -67,13 +75,14 @@
         }
 
         body {
-            background-color: #090b10;
+            background-color: #07090e;
             background-image:
-                radial-gradient(circle at 15% 10%, rgba(234, 179, 8, 0.08), transparent 35%),
-                radial-gradient(circle at 85% 20%, rgba(16, 185, 129, 0.06), transparent 35%),
-                radial-gradient(circle at 50% 90%, rgba(244, 63, 94, 0.06), transparent 40%);
+                radial-gradient(circle at 15% 10%, rgba(234, 179, 8, 0.09), transparent 38%),
+                radial-gradient(circle at 85% 20%, rgba(6, 182, 212, 0.08), transparent 38%),
+                radial-gradient(circle at 50% 90%, rgba(244, 63, 94, 0.06), transparent 42%);
             min-height: 100vh;
             overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', Inter, sans-serif;
         }
 
         .tactical-grid {
@@ -83,16 +92,38 @@
         }
 
         .glow-gold {
-            box-shadow: 0 0 24px rgba(234, 179, 8, 0.22);
+            box-shadow: 0 0 24px rgba(234, 179, 8, 0.25);
+        }
+
+        /* Gold Shimmer effect (identical to Luxury Elite Landing Page) */
+        .gold-shimmer {
+            background: linear-gradient(
+                to right,
+                #fde047 20%,
+                #ca8a04 40%,
+                #fde047 60%,
+                #ca8a04 80%
+            );
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: goldShine 5s linear infinite;
+        }
+
+        @keyframes goldShine {
+            to {
+                background-position: 200% center;
+            }
         }
 
         .wheel-pointer {
-            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.7));
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.8));
         }
 
         @keyframes pulseGlow {
             0%, 100% { box-shadow: 0 0 12px rgba(250, 204, 21, 0.35); }
-            50% { box-shadow: 0 0 26px rgba(250, 204, 21, 0.75); }
+            50% { box-shadow: 0 0 28px rgba(250, 204, 21, 0.8); }
         }
         .animate-winner {
             animation: pulseGlow 1.5s infinite;
@@ -110,7 +141,7 @@
             to { transform: rotate(360deg); }
         }
         .radar-sweep {
-            background: conic-gradient(from 0deg, rgba(250, 204, 21, 0.38) 0deg, rgba(250, 204, 21, 0.05) 55deg, transparent 90deg);
+            background: conic-gradient(from 0deg, rgba(250, 204, 21, 0.42) 0deg, rgba(250, 204, 21, 0.08) 55deg, transparent 90deg);
             animation: radarSweep 2.2s linear infinite;
         }
         .radar-sweep-fast {
@@ -143,68 +174,62 @@
 <body class="text-slate-100 font-sans tactical-grid antialiased selection:bg-yellow-500/30 selection:text-yellow-200">
 
     <!-- ==================== HEADER / NAVBAR ==================== -->
-    <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-obsidian/90 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
-            <!-- Brand with LX Diamond Logo -->
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-xl bg-gradient-to-b from-slate-900 to-obsidian border border-yellow-500/40 flex items-center justify-center p-1 shadow-lg glow-gold shrink-0">
-                    <svg viewBox="0 0 100 105" class="w-full h-full" xmlns="http://www.w3.org/2000/svg" aria-label="LX Luxury Elite Logo">
-                        <defs>
-                            <linearGradient id="lxGoldNav" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#fef08a"/>
-                                <stop offset="45%" stop-color="#d4af37"/>
-                                <stop offset="100%" stop-color="#926c15"/>
-                            </linearGradient>
-                            <linearGradient id="lxSilverNav" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#ffffff"/>
-                                <stop offset="50%" stop-color="#cbd5e1"/>
-                                <stop offset="100%" stop-color="#64748b"/>
-                            </linearGradient>
-                        </defs>
-                        <!-- Top Diamond -->
-                        <polygon points="50,24 35,10 42,3 58,3 65,10" fill="none" stroke="url(#lxGoldNav)" stroke-width="2.5" stroke-linejoin="round"/>
-                        <polyline points="35,10 65,10" fill="none" stroke="url(#lxGoldNav)" stroke-width="1.8"/>
-                        <polyline points="42,3 45,10 50,24 55,10 58,3" fill="none" stroke="url(#lxGoldNav)" stroke-width="1.6"/>
-                        <!-- Interlocking L (Gold) -->
-                        <path d="M18,26 L26,26 L26,76 L58,76 L54,84 L18,84 Z" fill="url(#lxGoldNav)"/>
-                        <!-- Diagonal X Gold Arm (Bottom-Left to Top-Right) -->
-                        <path d="M31,96 L72,26 L84,26 L43,96 Z" fill="url(#lxGoldNav)"/>
-                        <!-- Diagonal X Silver Arm (Top-Left to Bottom-Right) -->
-                        <path d="M29,26 L41,26 L82,96 L70,96 Z" fill="url(#lxSilverNav)" stroke="#090b10" stroke-width="2" stroke-linejoin="round"/>
-                    </svg>
+    <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-obsidian/95 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+            <!-- Brand with Official LX Logo from Landing Page -->
+            <a href="{{ route('home') }}" class="group flex items-center gap-3.5 transition-all">
+                <div class="relative py-0.5 flex items-center justify-center shrink-0">
+                    <img src="{{ asset('images/logo-lx.png') }}"
+                         alt="Luxury Elite Logo"
+                         class="h-11 sm:h-13 w-auto object-contain drop-shadow-[0_0_20px_rgba(234,179,8,0.4)] transition-transform duration-300 group-hover:scale-105">
                 </div>
-                <div>
+                <div class="border-l border-slate-700/80 pl-3.5">
                     <div class="flex items-center gap-2">
-                        <h1 class="font-display font-bold text-xl sm:text-2xl tracking-wider text-white leading-none">
-                            LUXURY <span class="text-yellow-400">ELITE</span>
+                        <h1 class="font-display font-extrabold text-xl sm:text-2xl tracking-wider uppercase leading-none">
+                            <span class="text-white">LUXURY</span> <span class="gold-shimmer">ELITE</span>
                         </h1>
-                        <span class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase rounded-md bg-yellow-500/15 text-yellow-400 border border-yellow-500/30">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono font-bold tracking-widest uppercase rounded bg-yellow-500/15 text-yellow-400 border border-yellow-500/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span>
                             Delta Force
                         </span>
                     </div>
-                    <p class="text-xs text-slate-400">Tactical Squad Randomizer &amp; Balancing • <span class="text-yellow-400/90 font-medium">Credit : iRzell</span></p>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">
+                        Tactical 20v20 Draft &amp; Balancing • <span class="text-yellow-400/90 font-mono font-semibold">Credit: iRzell</span>
+                    </p>
                 </div>
-            </div>
+            </a>
 
-            <!-- Live Quick Stats -->
+            <!-- Live Quick Stats & Controls -->
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-                <div class="flex items-center gap-3 px-3 py-1.5 rounded-xl bg-panel border border-slate-800 text-xs">
-                    <span class="text-slate-400">Player: <strong id="stat-total-players" class="text-white">0</strong></span>
+                <div class="flex items-center gap-2.5 sm:gap-3 px-3.5 py-1.5 rounded-xl bg-panel/90 border border-slate-800 text-xs font-mono shadow-inner">
+                    <span class="text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-users text-slate-500 text-[11px]"></i>
+                        <span class="hidden sm:inline text-slate-400 font-sans text-xs">Total:</span>
+                        <strong id="stat-total-players" class="text-white font-mono font-bold text-sm">0</strong>
+                    </span>
                     <span class="text-slate-700">|</span>
-                    <span class="text-slate-400">Pro: <strong id="stat-pro-players" class="text-yellow-400">0</strong></span>
+                    <span class="text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-star text-yellow-400 text-[11px]"></i>
+                        <span class="hidden sm:inline text-slate-400 font-sans text-xs">Pro:</span>
+                        <strong id="stat-pro-players" class="text-yellow-400 font-mono font-bold text-sm">0</strong>
+                    </span>
                     <span class="text-slate-700">|</span>
-                    <span class="text-slate-400">Slot: <strong id="stat-slots" class="text-emerald-400">0/0</strong></span>
+                    <span class="text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-emerald-400 text-[11px]"></i>
+                        <span class="hidden sm:inline text-slate-400 font-sans text-xs">Slot:</span>
+                        <strong id="stat-slots" class="text-emerald-400 font-mono font-bold text-sm">0/0</strong>
+                    </span>
                 </div>
 
                 <!-- Return to Main Site -->
-                <a href="{{ route('home') }}" class="px-3 py-2 rounded-xl bg-panel hover:bg-slate-800 border border-slate-800 text-xs text-yellow-400 hover:text-yellow-300 font-semibold flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    <span class="hidden sm:inline">Kembali ke HQ</span>
+                <a href="{{ route('home') }}" class="px-3.5 py-2 rounded-xl bg-panel hover:bg-yellow-500/10 border border-slate-800 hover:border-yellow-500/40 text-xs text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-2 transition duration-200">
+                    <i class="fa-solid fa-arrow-left text-[11px]"></i>
+                    <span class="hidden sm:inline font-display tracking-wider uppercase">Kembali ke HQ</span>
                 </a>
 
                 <!-- Sound Toggle -->
                 <button id="btn-sound" onclick="toggleSound()" title="Toggle Sound Effects"
-                    class="p-2.5 rounded-xl bg-panel hover:bg-slate-800 border border-slate-800 text-yellow-400 transition">
+                    class="p-2.5 rounded-xl bg-panel hover:bg-slate-800 border border-slate-800 hover:border-yellow-500/40 text-yellow-400 transition">
                     <i id="icon-sound" class="fa-solid fa-volume-high"></i>
                 </button>
             </div>
@@ -212,18 +237,21 @@
 
         <!-- Navigation Tabs -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <nav class="flex gap-1 sm:gap-2 overflow-x-auto pb-0" aria-label="Tabs">
+            <nav class="flex gap-2 overflow-x-auto pb-1" aria-label="Tabs">
                 <button onclick="switchTab('setup')" id="tab-setup"
-                    class="tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 border-yellow-400 text-yellow-400 whitespace-nowrap flex items-center gap-2 transition">
-                    <i class="fa-solid fa-users-gear"></i> 1. Roster &amp; Custom Tim
+                    class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-display font-bold tracking-wider uppercase border-b-2 border-yellow-400 text-yellow-400 whitespace-nowrap flex items-center gap-2.5 transition">
+                    <span class="w-5 h-5 rounded-md bg-yellow-500/20 text-yellow-400 text-[10px] font-mono flex items-center justify-center font-bold">01</span>
+                    <i class="fa-solid fa-users-gear text-xs"></i> Roster &amp; Custom Tim
                 </button>
                 <button onclick="switchTab('wheel')" id="tab-wheel"
-                    class="tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-white whitespace-nowrap flex items-center gap-2 transition">
-                    <i class="fa-solid fa-dharmachakra"></i> 2. Arena Draft &amp; Animasi
+                    class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-display font-bold tracking-wider uppercase border-b-2 border-transparent text-slate-400 hover:text-white whitespace-nowrap flex items-center gap-2.5 transition">
+                    <span class="w-5 h-5 rounded-md bg-slate-800 text-slate-400 text-[10px] font-mono flex items-center justify-center font-bold">02</span>
+                    <i class="fa-solid fa-dharmachakra text-xs"></i> Arena Draft &amp; Animasi
                 </button>
                 <button onclick="switchTab('board')" id="tab-board"
-                    class="tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-white whitespace-nowrap flex items-center gap-2 transition">
-                    <i class="fa-solid fa-trophy"></i> 3. Hasil, Leader &amp; Export
+                    class="tab-btn px-4 py-2.5 text-xs sm:text-sm font-display font-bold tracking-wider uppercase border-b-2 border-transparent text-slate-400 hover:text-white whitespace-nowrap flex items-center gap-2.5 transition">
+                    <span class="w-5 h-5 rounded-md bg-slate-800 text-slate-400 text-[10px] font-mono flex items-center justify-center font-bold">03</span>
+                    <i class="fa-solid fa-trophy text-xs"></i> Hasil, Leader &amp; Export
                 </button>
             </nav>
         </div>
@@ -347,7 +375,7 @@
 
                         <div class="mt-5 pt-4 border-t border-slate-800 flex justify-end">
                             <button onclick="switchTab('wheel')"
-                                class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-obsidian font-bold text-sm shadow-lg transition flex items-center justify-center gap-2">
+                                class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-obsidian font-display font-black uppercase tracking-wider text-sm shadow-lg glow-gold transition flex items-center justify-center gap-2">
                                 Lanjut ke Arena Draft <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         </div>
@@ -516,15 +544,15 @@
                     <!-- Stage Action Controls -->
                     <div class="w-full flex flex-wrap items-center justify-center gap-3 mt-4 pt-4 border-t border-slate-800/80">
                         <button id="btn-spin-once" onclick="runDraftOnce()"
-                            class="px-6 py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-obsidian font-bold text-sm shadow-lg glow-gold transition flex items-center gap-2">
+                            class="px-6 py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-obsidian font-display font-black uppercase tracking-wider text-sm shadow-lg glow-gold transition flex items-center gap-2">
                             <i class="fa-solid fa-play"></i> <span id="btn-spin-label">Putar 1x</span>
                         </button>
                         <button id="btn-auto-spin" onclick="toggleAutoSpin()"
-                            class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg transition flex items-center gap-2">
+                            class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-display font-black uppercase tracking-wider text-sm shadow-lg transition flex items-center gap-2">
                             <i class="fa-solid fa-forward"></i> Auto-Acak Semua
                         </button>
                         <button onclick="shuffleWheelEntries()"
-                            class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm transition flex items-center gap-2">
+                            class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-display font-bold uppercase tracking-wider text-sm transition flex items-center gap-2">
                             <i class="fa-solid fa-shuffle"></i> Kocok Urutan
                         </button>
                     </div>
@@ -571,15 +599,15 @@
             <div class="bg-panel border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-wrap items-center justify-between gap-3">
                 <div class="flex flex-wrap items-center gap-2">
                     <button onclick="exportToPNG()"
-                        class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-obsidian font-bold text-xs sm:text-sm shadow-lg transition flex items-center gap-2">
+                        class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-obsidian font-display font-black uppercase tracking-wider text-xs sm:text-sm shadow-lg glow-gold transition flex items-center gap-2">
                         <i class="fa-solid fa-image"></i> Download Gambar (PNG)
                     </button>
                     <button onclick="exportToExcel()"
-                        class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow transition flex items-center gap-2">
+                        class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-display font-black uppercase tracking-wider text-xs sm:text-sm shadow transition flex items-center gap-2">
                         <i class="fa-solid fa-file-excel"></i> Download Excel (.xlsx)
                     </button>
                     <button onclick="copyFormattedText()"
-                        class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs sm:text-sm transition flex items-center gap-2">
+                        class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-display font-bold uppercase tracking-wider text-xs sm:text-sm transition flex items-center gap-2">
                         <i class="fa-solid fa-copy"></i> Copy WA/Discord
                     </button>
                 </div>
@@ -616,40 +644,24 @@
             <!-- ==================== EXPORTABLE BOARD AREA ==================== -->
             <div id="export-board" class="bg-obsidian border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl space-y-6">
                 <!-- Export Header Banner -->
-                <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-slate-800/90">
-                    <div class="flex items-center gap-3.5">
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-b from-slate-900 to-obsidian border border-yellow-500/40 flex items-center justify-center p-1.5 shadow-lg shrink-0">
-                            <svg viewBox="0 0 100 105" class="w-full h-full" xmlns="http://www.w3.org/2000/svg" aria-label="LX Luxury Elite Logo">
-                                <defs>
-                                    <linearGradient id="lxGoldBoard" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#fef08a"/>
-                                        <stop offset="45%" stop-color="#d4af37"/>
-                                        <stop offset="100%" stop-color="#926c15"/>
-                                    </linearGradient>
-                                    <linearGradient id="lxSilverBoard" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#ffffff"/>
-                                        <stop offset="50%" stop-color="#cbd5e1"/>
-                                        <stop offset="100%" stop-color="#64748b"/>
-                                    </linearGradient>
-                                </defs>
-                                <polygon points="50,24 35,10 42,3 58,3 65,10" fill="none" stroke="url(#lxGoldBoard)" stroke-width="2.5" stroke-linejoin="round"/>
-                                <polyline points="35,10 65,10" fill="none" stroke="url(#lxGoldBoard)" stroke-width="1.8"/>
-                                <polyline points="42,3 45,10 50,24 55,10 58,3" fill="none" stroke="url(#lxGoldBoard)" stroke-width="1.6"/>
-                                <path d="M18,26 L26,26 L26,76 L58,76 L54,84 L18,84 Z" fill="url(#lxGoldBoard)"/>
-                                <path d="M31,96 L72,26 L84,26 L43,96 Z" fill="url(#lxGoldBoard)"/>
-                                <path d="M29,26 L41,26 L82,96 L70,96 Z" fill="url(#lxSilverBoard)" stroke="#090b10" stroke-width="2" stroke-linejoin="round"/>
-                            </svg>
+                <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-slate-800/90 relative">
+                    <div class="flex items-center gap-4">
+                        <div class="relative shrink-0 flex items-center justify-center">
+                            <img src="{{ asset('images/logo-lx.png') }}"
+                                 alt="Luxury Elite Logo"
+                                 crossorigin="anonymous"
+                                 class="h-14 sm:h-16 w-auto object-contain drop-shadow-[0_0_24px_rgba(234,179,8,0.5)]">
                         </div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h2 class="font-display font-bold text-2xl sm:text-3xl tracking-wider text-white leading-none">
-                                    LUXURY <span class="text-yellow-400">ELITE</span>
+                        <div class="border-l border-slate-700/80 pl-4">
+                            <div class="flex items-center gap-2.5">
+                                <h2 class="font-display font-black text-2xl sm:text-3xl tracking-wider uppercase leading-none">
+                                    <span class="text-white">LUXURY</span> <span class="gold-shimmer">ELITE</span>
                                 </h2>
-                                <span class="px-2.5 py-0.5 rounded-md bg-yellow-500/15 border border-yellow-500/40 text-yellow-400 text-[11px] font-bold tracking-widest uppercase">
+                                <span class="px-2.5 py-0.5 rounded-md bg-yellow-500/15 border border-yellow-500/40 text-yellow-400 text-[11px] font-mono font-bold tracking-widest uppercase">
                                     DELTA FORCE
                                 </span>
                             </div>
-                            <p id="export-subtitle" class="text-xs sm:text-sm text-slate-400 mt-1">
+                            <p id="export-subtitle" class="text-xs sm:text-sm text-slate-400 mt-1 font-sans">
                                 Official Match Roster • 20 vs 20 Tactical Warfare
                             </p>
                         </div>
@@ -692,12 +704,13 @@
 
     <!-- ==================== GLOBAL FOOTER ==================== -->
     <footer class="max-w-7xl mx-auto px-4 sm:px-6 py-6 mt-4 border-t border-slate-800/70 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
+            <img src="{{ asset('images/logo-lx.png') }}" alt="LX Logo" class="h-6 w-auto object-contain opacity-80">
             <span class="font-display font-bold text-slate-300 tracking-wider">LUXURY <span class="text-yellow-400">ELITE</span></span>
             <span>• Delta Force Tactical Randomizer</span>
         </div>
-        <div class="px-3 py-1 rounded-full bg-panel border border-slate-800 text-slate-300 font-semibold">
-            Credit : <span class="text-yellow-400">iRzell</span>
+        <div class="px-3.5 py-1 rounded-full bg-panel border border-slate-800 text-slate-300 font-semibold font-mono">
+            Credit: <span class="text-yellow-400">iRzell</span>
         </div>
     </footer>
 
@@ -749,13 +762,11 @@
 
             <!-- Modal Header -->
             <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-800">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-indigo-300 text-lg">
-                        <i class="fa-solid fa-shuffle"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-display font-bold text-xl sm:text-2xl text-white leading-none">
-                            ARENA ACAK POSISI <span class="text-yellow-400">TIM KE FRAKSI</span>
+                <div class="flex items-center gap-3.5">
+                    <img src="{{ asset('images/logo-lx.png') }}" alt="LX Logo" class="h-9 w-auto object-contain drop-shadow-[0_0_12px_rgba(234,179,8,0.4)]">
+                    <div class="border-l border-slate-700/80 pl-3.5">
+                        <h3 class="font-display font-black text-xl sm:text-2xl text-white leading-none uppercase">
+                            ARENA ACAK POSISI <span class="gold-shimmer">TIM KE FRAKSI</span>
                         </h3>
                         <p class="text-xs text-slate-400 mt-0.5">Acak penempatan setiap tim ke Fraksi dengan animasi seru!</p>
                     </div>
@@ -1194,11 +1205,14 @@
                 const btn = document.getElementById(`tab-${t}`);
                 const view = document.getElementById(`view-${t}`);
                 if (!btn || !view) return;
+                const badge = btn.querySelector('span');
                 if (t === tabName) {
-                    btn.className = 'tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 border-yellow-400 text-yellow-400 whitespace-nowrap flex items-center gap-2 transition';
+                    btn.className = 'tab-btn px-4 py-2.5 text-xs sm:text-sm font-display font-bold tracking-wider uppercase border-b-2 border-yellow-400 text-yellow-400 whitespace-nowrap flex items-center gap-2.5 transition';
+                    if (badge) badge.className = 'w-5 h-5 rounded-md bg-yellow-500/20 text-yellow-400 text-[10px] font-mono flex items-center justify-center font-bold';
                     view.classList.remove('hidden');
                 } else {
-                    btn.className = 'tab-btn px-4 py-2.5 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-white whitespace-nowrap flex items-center gap-2 transition';
+                    btn.className = 'tab-btn px-4 py-2.5 text-xs sm:text-sm font-display font-bold tracking-wider uppercase border-b-2 border-transparent text-slate-400 hover:text-white whitespace-nowrap flex items-center gap-2.5 transition';
+                    if (badge) badge.className = 'w-5 h-5 rounded-md bg-slate-800 text-slate-400 text-[10px] font-mono flex items-center justify-center font-bold';
                     view.classList.add('hidden');
                 }
             });
@@ -1696,7 +1710,7 @@
                 ctx.stroke();
 
                 ctx.fillStyle = '#34d399';
-                ctx.font = '700 13px Inter, sans-serif';
+                ctx.font = '700 14px "Rajdhani", "Plus Jakarta Sans", sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText('Semua Tim Sudah Terbagi!', cx, cy - 48);
@@ -1727,7 +1741,7 @@
 
                 const isLight = ['#eab308', '#10b981', '#38bdf8', '#f59e0b'].includes(WHEEL_COLORS[i % WHEEL_COLORS.length]);
                 ctx.fillStyle = isLight ? '#090b10' : '#f8fafc';
-                ctx.font = `700 ${tdPool.length > 12 ? 11 : 13}px Inter, sans-serif`;
+                ctx.font = `700 ${tdPool.length > 12 ? 12 : 14}px "Rajdhani", "Plus Jakarta Sans", sans-serif`;
                 const clipped = team.name.length > 14 ? team.name.slice(0, 13) + '…' : team.name;
                 ctx.fillText(clipped, radius - 14, 0);
                 ctx.restore();
@@ -2297,7 +2311,7 @@
                 ctx.stroke();
 
                 ctx.fillStyle = '#94a3b8';
-                ctx.font = '600 14px Inter, sans-serif';
+                ctx.font = '700 14px "Rajdhani", "Plus Jakarta Sans", sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText('Semua player sudah masuk tim!', cx, cy - 55);
@@ -2331,8 +2345,8 @@
                 const isLightSlice = ['#eab308', '#10b981', '#38bdf8', '#f59e0b'].includes(WHEEL_COLORS[i % WHEEL_COLORS.length]);
                 ctx.fillStyle = isLightSlice ? '#090b10' : '#f8fafc';
 
-                const fontSize = entries.length > 30 ? 10 : entries.length > 18 ? 11.5 : 13;
-                ctx.font = `700 ${fontSize}px Inter, sans-serif`;
+                const fontSize = entries.length > 30 ? 11 : entries.length > 18 ? 12.5 : 14;
+                ctx.font = `700 ${fontSize}px "Rajdhani", "Plus Jakarta Sans", sans-serif`;
 
                 const label = (player.tier === 'pro' ? '★ ' : '') + player.name;
                 const clipped = label.length > 16 ? label.slice(0, 15) + '…' : label;
@@ -3115,7 +3129,7 @@
                         </div>
                         <div class="flex items-center gap-1.5 shrink-0">
                             <button onclick="togglePlayerTier('${p.id}')" title="Klik untuk ubah tier Pro/Normal"
-                                class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition ${
+                                class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider transition ${
                                     p.tier === 'pro'
                                         ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 hover:bg-yellow-500/30'
                                         : 'bg-slate-800 text-slate-400 border border-slate-700 hover:text-white'
@@ -3292,32 +3306,33 @@
                                     <div ${animAttr} class="${animCls} rounded-2xl bg-panel border border-slate-800 overflow-hidden flex flex-col shadow-lg">
                                         <!-- Team Header -->
                                         <div class="px-3.5 py-2.5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between gap-2">
-                                            <span class="font-display font-bold text-base text-white truncate">${escapeHtml(t.name)}</span>
-                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${mems.length >= t.capacity ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'}">
+                                            <span class="font-display font-black text-base text-white uppercase tracking-wider truncate">${escapeHtml(t.name)}</span>
+                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold ${mems.length >= t.capacity ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-400 border border-slate-700'}">
                                                 ${mems.length}/${t.capacity}
                                             </span>
                                         </div>
 
                                         <!-- Members List -->
                                         <div class="divide-y divide-slate-800/70 flex-1">
-                                            ${mems.map(p => {
+                                            ${mems.map((p, pIdx) => {
                                                 const isSwapSelected = swapSourcePlayerId === p.id;
                                                 const rowBg = p.isLeader
-                                                    ? 'bg-yellow-400 text-obsidian font-bold'
+                                                    ? 'bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-obsidian font-bold shadow-sm'
                                                     : isSwapSelected
                                                         ? 'bg-sky-500/25 text-white ring-1 ring-inset ring-sky-400'
                                                         : 'bg-transparent text-slate-100 hover:bg-slate-800/50';
                                                 const iconBtnCls = p.isLeader
-                                                    ? 'text-obsidian/70 hover:text-obsidian'
+                                                    ? 'text-obsidian/75 hover:text-obsidian'
                                                     : 'text-slate-500 hover:text-white';
 
                                                 return `
                                                     <div class="px-3 py-2 flex items-center justify-between gap-1.5 text-xs transition ${rowBg}">
                                                         <div class="min-w-0 flex items-center gap-1.5">
-                                                            ${p.isLeader ? '<i class="fa-solid fa-crown text-obsidian text-[11px] shrink-0"></i>' : ''}
-                                                            <span class="truncate">${escapeHtml(p.name)}</span>
+                                                            <span class="font-mono text-[10px] ${p.isLeader ? 'text-obsidian/70 font-bold' : 'text-slate-500'} w-4 shrink-0">${pIdx + 1}.</span>
+                                                            ${p.isLeader ? '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-obsidian text-yellow-400 text-[9px] font-mono font-black tracking-wider uppercase shrink-0"><i class="fa-solid fa-crown text-[8px]"></i> LEADER</span>' : ''}
+                                                            <span class="truncate font-medium">${escapeHtml(p.name)}</span>
                                                             ${showTier && p.tier === 'pro' ? `
-                                                                <span class="px-1 py-0.2 rounded text-[9px] font-extrabold uppercase shrink-0 ${p.isLeader ? 'bg-obsidian text-yellow-400' : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'}">PRO</span>
+                                                                <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-extrabold uppercase shrink-0 ${p.isLeader ? 'bg-obsidian/20 text-obsidian border border-obsidian/40' : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'}">PRO</span>
                                                             ` : ''}
                                                         </div>
                                                         <div class="no-export flex items-center gap-1 shrink-0">
@@ -3335,9 +3350,10 @@
                                                 `;
                                             }).join('')}
 
-                                            ${Array.from({ length: emptySlots }).map(() => `
-                                                <div class="px-3 py-2 text-xs text-slate-600 italic bg-obsidian/30">
-                                                    — Slot kosong —
+                                            ${Array.from({ length: emptySlots }).map((_, sIdx) => `
+                                                <div class="px-3 py-2 text-xs text-slate-600 font-mono italic bg-obsidian/30 flex items-center gap-1.5">
+                                                    <span class="text-slate-700 w-4">${mems.length + sIdx + 1}.</span>
+                                                    <span>// SLOT KOSONG</span>
                                                 </div>
                                             `).join('')}
                                         </div>
