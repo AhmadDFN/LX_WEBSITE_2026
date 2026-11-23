@@ -23,9 +23,15 @@
    - Terhubung dengan navigasi utama di Navbar Desktop, Mobile menu, dan tombol kembali ke HQ.
 3. **Database Scaffolding Dasar:**
    - Tabel: `users`, `game_modes`, `player_profiles`, `squads`, `squad_members`, `scrim_matches`, `scrim_attendances`, `match_results`, `recruitment_applications`.
-   - Seed data awal untuk mode game Delta Force (Detonation, Hazard Operations, Havoc Warfare).
-4. **Resilience & Production Verification:**
-   - Seluruh query publik dibungkus penanganan fallback database (`try-catch`) agar website tetap berjalan 100% stabil saat database maintenance.
+   - Migration baru: `2026_10_14_000009_create_tournaments_and_matches_tables.php` untuk `tournaments` dan `tournament_matches`.
+   - Model Eloquent `Tournament` dan `TournamentMatch` terpasang dengan relasi penuh.
+4. **Portal Command Ops & 3 Modul Management:**
+   - Dashboard Terpadu Pengurus: `/management`
+   - Modul 1 — Player & Staff Roles: `/management/players` (filter tier, edit dossier, assign privilege role pengurus).
+   - Modul 2 — Scrim Operations: `/management/scrims` (jadwal scrim, room credential vault reveal/hide, input hasil & evaluasi coach).
+   - Modul 3 — Tournaments & Brackets: `/management/tournaments` & `/management/tournaments/{id}` (registrasi turnamen, fixture ronde, scoring, dan pencatatan gelar juara/placement).
+5. **Resilience & Production Verification:**
+   - Seluruh query dibungkus penanganan fallback database (`try-catch`) agar website tetap berjalan 100% stabil saat database maintenance.
    - Pengujian live di server produksi Hostinger: seluruh rute publik & tools mengembalikan `HTTP 200 OK`.
 
 ---
@@ -85,3 +91,34 @@ Sesuai arahan, sistem dibagi menjadi 3 pilar utama dengan antarmuka pengurus (Ma
 2. **Uji Blade & Route:** `php artisan route:list` dan `php artisan view:cache` memastikan tidak ada error kompilasi template.
 3. **Commit & Push:** Setiap perubahan fungsional di-commit dengan pesan deskriptif dan di-push ke remote branch `main`.
 4. **Live Verification:** Memeriksa status HTTP 200 melalui server Hostinger untuk menjamin fungsionalitas di lingkungan nyata.
+
+---
+
+## 5. Roadmap & Prioritized Execution Phases (TODO Tasks)
+
+Daftar urutan pengerjaan bertahap (Phase by Phase) untuk menyempurnakan platform management:
+
+### 🟩 Phase 1: Database Migration & Seeding Data Nyata (Foundation Data)
+- [ ] **1.1 Migration Eksekusi Turnamen:** Jalankan migrasi tabel `tournaments` & `tournament_matches` di database produksi/remote.
+- [ ] **1.2 Seeder Skuad Resmi & Roster Awal:** Seed data skuad resmi (`Luxury Elite Alpha`, `Luxury Elite Bravo`, `Luxury Elite Havoc Division`) dan data pemain inti clan.
+- [ ] **1.3 Superadmin & Staff Default Account:** Memastikan kredensial akun Superadmin (Owner) dan Manager siap digunakan untuk live testing autentikasi manajemen.
+
+### 🟦 Phase 2: Roster Builder & Squad Allocation Engine (Management Player)
+- [ ] **2.1 Squad Member Assignment:** Form interaktif di Player Management untuk menugaskan pemain ke skuad tertentu beserta slot role (`IGL`, `Starter 1-4`, `Sub/Cadangan`).
+- [ ] **2.2 Trial-to-Core Promotion Workflow:** Tombol 1-klik untuk menaikkan pemain berstatus `Trial` menjadi `Competitive Core` resmi clan dengan tanggal bergabung tercatat otomatis.
+- [ ] **2.3 Player Stats Input:** Fitur input/update K/D ratio, Winrate (%), total jam terbang scrim, dan lencana MVP per pemain.
+
+### 🟨 Phase 3: Scrim Telemetry, Interactive RSVP & Proof Ingest (Management Scrim)
+- [ ] **3.1 Live RSVP Widget Pemain:** Di dashboard pemain & halaman match publik, pemain bisa klik 1-tombol: `Hadir / Ready`, `Tentative`, atau `Izin` (dengan modal input alasan wajib).
+- [ ] **3.2 Telemetri Kesiapan Lineup (Readiness Indicator):** Badge dinamis penanda kesiapan skuad (misal: `5/5 Full Ready Tempur` atau `Kurang 1 Orang (Need Sub)`).
+- [ ] **3.3 Timed Secret Room Reveal:** Room ID & Password hanya otomatis terlihat 15-30 menit sebelum match dimulai khusus bagi pemain yang berstatus RSVP `Attending`.
+- [ ] **3.4 Upload Screenshot Scoreboard Proof:** File uploader untuk bukti screenshot scoreboard hasil akhir scrim yang langsung tampil di match report.
+
+### 🟧 Phase 4: Tournament Visual Bracket Tree & Clan Trophy Showcase (Management Tour)
+- [ ] **4.1 Interactive Visual Bracket Tree:** Tampilan bagan pohon visual untuk Single Elimination (Quarterfinal &rarr; Semifinal &rarr; Grand Final) dengan garis konektor taktis.
+- [ ] **4.2 Auto-Progression Bracket:** Saat match babak perempat final ditandai "Won", tim pemenang otomatis maju dan mengisi slot di babak semifinal.
+- [ ] **4.3 Clan Hall of Fame / Trophy Room:** Halaman publik showcase prestasi (`/trophies` atau section di beranda) yang menampilkan piala juara 1, runner-up, dan total perolehan prizepool clan.
+
+### 🟪 Phase 5: Otomasi & Integrasi Komunitas (Discord Webhooks)
+- [ ] **5.1 Discord Scrim Announcer:** Webhook otomatis mengirim pemberitahuan jadwal scrim baru ke channel `#scrim-announcement` Discord clan.
+- [ ] **5.2 Discord Tryout Application Alert:** Webhook otomatis mengirim ringkasan profil saat ada pendaftar baru dari form Join Squad ke channel `#recruitment-logs`.
