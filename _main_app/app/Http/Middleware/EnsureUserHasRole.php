@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class EnsureUserHasRole
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  string  ...$roles
+     */
+    public function handle(Request $request, Closure $next, string ...$roles): Response
+    {
+        if (! $request->user()) {
+            return redirect()->guest(route('login'))->with('status', [
+                'type' => 'warning',
+                'code' => 'AUTH_REQUIRED',
+                'message' => 'Tactical access credentials required to access this sector.',
+            ]);
+        }
+
+        if (! in_array($request->user()->role, $roles, true)) {
+            abort(403, 'Tactical Clearance Level Insufficient: Access restricted to authorized command roles.');
+        }
+
+        return $next($request);
+    }
+}
