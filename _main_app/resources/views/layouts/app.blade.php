@@ -5,10 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Luxury Elite - Official Website')</title>
 
-    <!-- Google Fonts -->
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+
+    <!-- Google Fonts: Instrument Sans & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,29 +23,9 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        obsidian: {
-                            950: '#020612',
-                            900: '#070b19',
-                            850: '#0e1426',
-                            800: '#161e36'
-                        },
-                        carbon: {
-                            900: '#14171f',
-                            800: '#1d222e',
-                            700: '#2b3242'
-                        },
-                        gold: {
-                            300: '#fae69e',
-                            400: '#e5c07b',
-                            500: '#d4af37',
-                            600: '#b89428',
-                            700: '#8c6e18'
-                        }
-                    },
                     fontFamily: {
-                        sans: ['Outfit', 'Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace']
+                        sans: ['"Instrument Sans"', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
                     }
                 }
             }
@@ -51,24 +37,18 @@
 
     <style>
         [x-cloak] { display: none !important; }
-        .hud-border {
-            border: 1px solid rgba(212, 175, 55, 0.22);
-            box-shadow: inset 0 0 12px rgba(212, 175, 55, 0.04);
-        }
-        .gold-glow {
-            text-shadow: 0 0 14px rgba(212, 175, 55, 0.45);
-        }
-        .gold-glow-box {
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.15);
-        }
-        .tactical-grid {
-            background-size: 32px 32px;
-            background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+
+        :root {
+            --font-instrument-sans: "Instrument Sans", "Inter", sans-serif;
         }
 
-        /* Luxury Elite Animations */
+        body {
+            font-family: var(--font-instrument-sans);
+            background-color: #020612;
+            color: #ffffff;
+        }
+
+        /* Efek kilauan emas pada teks */
         .gold-shimmer {
             background: linear-gradient(
                 to right,
@@ -90,23 +70,25 @@
             }
         }
 
+        /* Efek mengapung halus untuk hero image */
         .float-anim {
             animation: floating 6s ease-in-out infinite;
         }
 
         @keyframes floating {
-            0%, 100% {
+            0%,
+            100% {
                 transform: translateY(0px);
             }
             50% {
-                transform: translateY(-16px);
+                transform: translateY(-20px);
             }
         }
 
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(24px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -115,128 +97,121 @@
         }
     </style>
 </head>
-<body class="bg-[#020612] text-zinc-100 font-sans min-h-screen flex flex-col selection:bg-gold-500 selection:text-black tactical-grid">
-    
-    <!-- TOP STATUS TELEMETRY BAR -->
-    <div class="border-b border-zinc-800/80 bg-[#070b19]/90 backdrop-blur-md px-4 py-1.5 text-xs font-mono text-zinc-400 flex justify-between items-center">
-        <div class="flex items-center space-x-3">
-            <span class="inline-flex items-center text-gold-400 font-semibold tracking-wider">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-2"></span>
-                TACTICAL NETWORK: ONLINE
+<body class="bg-[#020612] text-white font-sans min-h-screen flex flex-col selection:bg-yellow-500 selection:text-black overflow-x-hidden antialiased">
+
+    <!-- NAVBAR (EXACT REPLICATION FROM SVELTE NAVBAR) -->
+    <nav class="absolute top-0 w-full z-50 flex items-center justify-between px-8 md:px-12 py-6 bg-gradient-to-b from-black/90 to-transparent backdrop-blur-[2px]" x-data="{ mobileOpen: false }">
+        <!-- BRAND LOGO -->
+        <a href="{{ route('home') }}" class="flex items-center gap-0 cursor-pointer group">
+            <img
+                src="{{ asset('images/logo-lx.png') }}"
+                alt="Logo Luxury Elite"
+                class="h-16 md:h-20 w-auto object-contain transition-transform duration-500 group-hover:scale-110"
+            />
+            <span class="text-lg md:text-xl font-light tracking-[0.3em] text-gray-200 hidden lg:block -ml-2">
+                LUXURY <span class="font-bold text-yellow-500">ELITE</span>
             </span>
-            <span class="hidden sm:inline text-zinc-500">|</span>
-            <span class="hidden sm:inline text-zinc-400">DELTA FORCE DIVISION [ID: LX-DF-2026]</span>
-        </div>
-        <div class="flex items-center space-x-4">
-            <span class="text-zinc-400">SERVER: <span class="text-zinc-200">ASIA / WIB</span></span>
-            <span class="text-gold-500/80 font-bold">LUXURY ELITE</span>
-        </div>
-    </div>
+        </a>
 
-    <!-- MAIN NAVIGATION -->
-    <header class="sticky top-0 z-50 bg-[#020612]/90 backdrop-blur-xl border-b border-white/10" x-data="{ mobileOpen: false }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- LOGO -->
-            <a href="{{ route('home') }}" class="flex items-center space-x-3 group">
-                <img src="{{ asset('images/logo-lx.png') }}" alt="Luxury Elite" class="h-12 md:h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105 drop-shadow-[0_0_12px_rgba(6,182,212,0.3)]">
-                <div class="flex flex-col">
-                    <span class="text-xl font-extrabold tracking-wider text-white group-hover:text-gold-400 transition-colors">
-                        LUXURY <span class="text-yellow-500">ELITE</span>
-                    </span>
-                    <span class="text-[10px] font-mono tracking-widest text-zinc-400 -mt-1 uppercase">
-                        Official Esports Organization
-                    </span>
-                </div>
+        <!-- DESKTOP NAV MENU -->
+        <div class="hidden md:flex gap-8 text-[11px] font-bold tracking-[0.2em] uppercase text-gray-400">
+            <a
+                href="{{ route('home') }}"
+                class="hover:text-cyan-400 transition-colors duration-300 {{ request()->routeIs('home') ? 'text-cyan-400 border-b border-cyan-400' : '' }}"
+            >
+                Home
             </a>
-
-            <!-- DESKTOP NAV -->
-            <nav class="hidden md:flex items-center space-x-1 lg:space-x-3">
-                <a href="{{ route('home') }}" class="px-3.5 py-2 rounded text-xs font-bold tracking-[0.15em] uppercase transition-all {{ request()->routeIs('home') ? 'text-cyan-400 border-b-2 border-cyan-400' : 'text-zinc-300 hover:text-cyan-400' }}">
-                    HOME
+            <a
+                href="{{ route('roster') }}"
+                class="hover:text-cyan-400 transition-colors duration-300 {{ request()->routeIs('roster*') ? 'text-cyan-400 border-b border-cyan-400' : '' }}"
+            >
+                Roster
+            </a>
+            <a
+                href="{{ route('matches') }}"
+                class="hover:text-cyan-400 transition-colors duration-300 {{ request()->routeIs('matches*') ? 'text-cyan-400 border-b border-cyan-400' : '' }}"
+            >
+                Matches
+            </a>
+            <a
+                href="{{ route('join.squad') }}"
+                class="hover:text-cyan-400 transition-colors duration-300 {{ request()->routeIs('join.squad*') ? 'text-cyan-400 border-b border-cyan-400' : '' }}"
+            >
+                Join Squad
+            </a>
+            @auth
+                @if(in_array(Auth::user()->role, ['superadmin', 'manager', 'coach']))
+                <a
+                    href="{{ route('management.applications.index') }}"
+                    class="hover:text-cyan-400 transition-colors duration-300 {{ request()->routeIs('management*') ? 'text-cyan-400 border-b border-cyan-400' : '' }}"
+                >
+                    Manage
                 </a>
-                <a href="{{ route('roster') }}" class="px-3.5 py-2 rounded text-xs font-bold tracking-[0.15em] uppercase transition-all {{ request()->routeIs('roster') ? 'text-cyan-400 border-b-2 border-cyan-400' : 'text-zinc-300 hover:text-cyan-400' }}">
-                    ROSTER
-                </a>
-                <a href="{{ route('matches') }}" class="px-3.5 py-2 rounded text-xs font-bold tracking-[0.15em] uppercase transition-all {{ request()->routeIs('matches*') ? 'text-cyan-400 border-b-2 border-cyan-400' : 'text-zinc-300 hover:text-cyan-400' }}">
-                    MATCHES
-                </a>
-                <a href="{{ route('join.squad') }}" class="px-3.5 py-2 rounded text-xs font-bold tracking-[0.15em] uppercase transition-all {{ request()->routeIs('join.squad*') ? 'text-cyan-400 border-b-2 border-cyan-400' : 'text-zinc-300 hover:text-cyan-400' }}">
-                    JOIN SQUAD
-                </a>
-                <div class="h-4 w-px bg-zinc-800 mx-1"></div>
-                <a href="{{ route('management.scrims.create') }}" class="px-2.5 py-1.5 rounded text-xs font-mono font-semibold text-zinc-400 hover:text-gold-400 transition-colors">
-                    + SCRIM
-                </a>
-                <a href="{{ route('management.applications.index') }}" class="px-2.5 py-1.5 rounded text-xs font-mono font-semibold text-zinc-400 hover:text-gold-400 transition-colors">
-                    TRIAGE
-                </a>
-            </nav>
-
-            <!-- ACTION CTA (AUTH AWARE) -->
-            <div class="hidden md:flex items-center space-x-3">
-                @auth
-                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-zinc-900 border border-gold-500/30 text-xs font-mono text-zinc-200 hover:border-gold-500 transition-colors">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                        <span class="font-bold text-white">{{ Auth::user()->playerProfile->ign ?? Auth::user()->name }}</span>
-                        <span class="px-1.5 py-0.2 rounded text-[9px] bg-gold-500/20 text-gold-400 font-bold uppercase">{{ Auth::user()->role }}</span>
-                    </a>
-
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="text-xs font-mono uppercase tracking-wider text-zinc-400 hover:text-red-400 px-2 py-1.5 transition-colors">
-                            LOGOUT
-                        </button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}" class="px-6 py-2 border border-yellow-600/40 rounded-full text-xs font-bold text-yellow-500 hover:bg-yellow-500 hover:text-black transition-all duration-300 uppercase tracking-widest">
-                        LOGIN
-                    </a>
-                @endauth
-            </div>
-
-            <!-- Mobile Hamburger Button -->
-            <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 rounded text-zinc-400 hover:text-white focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path :class="{'hidden': mobileOpen, 'block': !mobileOpen}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    <path :class="{'hidden': !mobileOpen, 'block': mobileOpen}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
+                @endif
+            @endauth
         </div>
 
-        <!-- Mobile Menu Dropdown -->
-        <div x-show="mobileOpen" x-cloak class="md:hidden border-t border-zinc-800 bg-[#070b19] px-4 pt-3 pb-5 space-y-2">
-            <a href="{{ route('home') }}" class="block px-3 py-2 rounded text-sm font-bold tracking-wider uppercase {{ request()->routeIs('home') ? 'text-cyan-400 bg-white/5' : 'text-zinc-300 hover:text-white' }}">
-                HOME
-            </a>
-            <a href="{{ route('roster') }}" class="block px-3 py-2 rounded text-sm font-bold tracking-wider uppercase {{ request()->routeIs('roster') ? 'text-cyan-400 bg-white/5' : 'text-zinc-300 hover:text-white' }}">
-                ROSTER
-            </a>
-            <a href="{{ route('matches') }}" class="block px-3 py-2 rounded text-sm font-bold tracking-wider uppercase {{ request()->routeIs('matches*') ? 'text-cyan-400 bg-white/5' : 'text-zinc-300 hover:text-white' }}">
-                MATCHES
-            </a>
-            <a href="{{ route('join.squad') }}" class="block px-3 py-2 rounded text-sm font-bold tracking-wider uppercase {{ request()->routeIs('join.squad*') ? 'text-cyan-400 bg-white/5' : 'text-zinc-300 hover:text-white' }}">
-                JOIN SQUAD
-            </a>
-            <div class="pt-2 border-t border-zinc-800 flex items-center justify-between">
-                @auth
-                    <a href="{{ route('dashboard') }}" class="text-xs font-mono text-gold-400 font-bold uppercase">Dashboard ({{ Auth::user()->name }})</a>
+        <!-- AUTH BUTTONS -->
+        <div class="hidden md:flex items-center gap-4">
+            @auth
+                <a
+                    href="{{ route('dashboard') }}"
+                    class="px-5 py-2 border border-yellow-600/30 rounded-full text-xs font-bold text-yellow-500 hover:bg-yellow-500 hover:text-black transition-all duration-500 uppercase tracking-widest"
+                >
+                    {{ Auth::user()->playerProfile->ign ?? Auth::user()->name }}
+                </a>
+                <form action="{{ route('logout') }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="text-xs uppercase tracking-wider text-zinc-400 hover:text-red-400 transition-colors font-mono">
+                        Logout
+                    </button>
+                </form>
+            @else
+                <a
+                    href="{{ route('login') }}"
+                    class="px-6 py-2 border border-yellow-600/30 rounded-full text-xs font-bold text-yellow-500 hover:bg-yellow-500 hover:text-black transition-all duration-500 uppercase tracking-widest"
+                >
+                    Login
+                </a>
+            @endauth
+        </div>
+
+        <!-- MOBILE MENU BUTTON -->
+        <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 text-zinc-300 hover:text-white focus:outline-none">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path :class="{'hidden': mobileOpen, 'block': !mobileOpen}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                <path :class="{'hidden': !mobileOpen, 'block': mobileOpen}" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <!-- MOBILE DROPDOWN -->
+        <div x-show="mobileOpen" x-cloak class="md:hidden absolute top-full left-0 w-full bg-[#020612]/95 border-b border-white/10 px-6 py-6 space-y-4 backdrop-blur-lg">
+            <a href="{{ route('home') }}" class="block text-xs font-bold uppercase tracking-[0.2em] {{ request()->routeIs('home') ? 'text-cyan-400' : 'text-zinc-300' }}">Home</a>
+            <a href="{{ route('roster') }}" class="block text-xs font-bold uppercase tracking-[0.2em] {{ request()->routeIs('roster*') ? 'text-cyan-400' : 'text-zinc-300' }}">Roster</a>
+            <a href="{{ route('matches') }}" class="block text-xs font-bold uppercase tracking-[0.2em] {{ request()->routeIs('matches*') ? 'text-cyan-400' : 'text-zinc-300' }}">Matches</a>
+            <a href="{{ route('join.squad') }}" class="block text-xs font-bold uppercase tracking-[0.2em] {{ request()->routeIs('join.squad*') ? 'text-cyan-400' : 'text-zinc-300' }}">Join Squad</a>
+            @auth
+                <div class="pt-3 border-t border-white/10 flex items-center justify-between">
+                    <a href="{{ route('dashboard') }}" class="text-xs text-yellow-400 font-bold uppercase tracking-wider">Dashboard</a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="text-xs font-mono text-red-400 uppercase">Logout</button>
+                        <button type="submit" class="text-xs text-red-400 uppercase tracking-wider">Logout</button>
                     </form>
-                @else
-                    <a href="{{ route('login') }}" class="w-full text-center py-2 border border-yellow-500/50 rounded-full text-xs font-bold text-yellow-400 uppercase tracking-wider">
-                        LOGIN
+                </div>
+            @else
+                <div class="pt-3 border-t border-white/10">
+                    <a href="{{ route('login') }}" class="block text-center py-2 border border-yellow-600/30 rounded-full text-xs font-bold text-yellow-500 uppercase tracking-widest">
+                        Login
                     </a>
-                @endauth
-            </div>
+                </div>
+            @endauth
         </div>
-    </header>
+    </nav>
 
-    <!-- FLASH MESSAGES NOTIFICATION BANNER -->
+    <!-- FLASH MESSAGES -->
     @if(session('status'))
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 w-full">
-        <div class="p-4 rounded-lg flex items-start space-x-3 border font-mono text-xs
+    <div class="max-w-7xl mx-auto px-6 mt-28 w-full z-40">
+        <div class="p-4 rounded-xl flex items-start space-x-3 border font-mono text-xs
             @if(session('status.type') === 'success') bg-emerald-950/40 border-emerald-500/40 text-emerald-300
             @elseif(session('status.type') === 'warning') bg-amber-950/40 border-amber-500/40 text-amber-300
             @else bg-blue-950/40 border-blue-500/40 text-blue-300
@@ -259,27 +234,26 @@
     @endif
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1">
+    <main class="flex-1 {{ request()->routeIs('home') ? '' : 'pt-28 md:pt-32' }}">
         @yield('content')
     </main>
 
-    <!-- FOOTER -->
-    <footer class="border-t border-white/10 bg-[#070b19] py-12 mt-20 text-xs text-zinc-400 font-mono">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="flex items-center space-x-3">
-                <img src="{{ asset('images/logo-lx.png') }}" alt="LX Logo" class="h-6 w-auto object-contain">
-                <span class="text-zinc-200 font-bold tracking-wider">LUXURY ELITE (LX)</span>
-                <span class="text-zinc-600">|</span>
-                <span class="text-zinc-400">DELTA FORCE COMPETITIVE BATTALION</span>
+    <!-- FOOTER (EXACT LUXURY ELITE MINIMALIST FOOTER) -->
+    <footer class="border-t border-white/5 bg-[#020612] py-12 text-xs text-gray-500 font-sans">
+        <div class="max-w-7xl mx-auto px-8 md:px-12 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <img src="{{ asset('images/logo-lx.png') }}" alt="LX Logo" class="h-8 w-auto object-contain">
+                <span class="text-gray-300 font-light tracking-[0.2em]">LUXURY <span class="font-bold text-yellow-500">ELITE</span></span>
+                <span class="text-zinc-700">|</span>
+                <span class="text-zinc-500 text-[11px] uppercase tracking-wider">Delta Force Division</span>
             </div>
-            <div class="flex flex-wrap justify-center gap-6 text-xs uppercase tracking-wider">
-                <a href="{{ route('home') }}" class="hover:text-cyan-400 transition-colors">HOME</a>
-                <a href="{{ route('roster') }}" class="hover:text-cyan-400 transition-colors">ROSTER</a>
-                <a href="{{ route('matches') }}" class="hover:text-cyan-400 transition-colors">MATCHES</a>
-                <a href="{{ route('join.squad') }}" class="hover:text-cyan-400 transition-colors">JOIN SQUAD</a>
-                <a href="{{ route('management.scrims.create') }}" class="hover:text-cyan-400 transition-colors">SCHEDULE SCRIM</a>
+            <div class="flex flex-wrap justify-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                <a href="{{ route('home') }}" class="hover:text-cyan-400 transition-colors">Home</a>
+                <a href="{{ route('roster') }}" class="hover:text-cyan-400 transition-colors">Roster</a>
+                <a href="{{ route('matches') }}" class="hover:text-cyan-400 transition-colors">Matches</a>
+                <a href="{{ route('join.squad') }}" class="hover:text-cyan-400 transition-colors">Join Squad</a>
             </div>
-            <div class="text-zinc-500">
+            <div class="text-[11px] text-zinc-500 tracking-wider">
                 &copy; {{ date('Y') }} LUXURY ELITE. ALL RIGHTS RESERVED.
             </div>
         </div>
