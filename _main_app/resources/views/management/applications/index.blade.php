@@ -1,17 +1,21 @@
 @extends('layouts.app')
 
 @section('title', 'Recruitment Triage - Management Console')
+@section('page_title', 'Recruitment Application Triage')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    @include('management.partials.nav')
 
-    <!-- HEADER -->
-    <div class="border-b border-gold-500/20 pb-4 flex justify-between items-center">
-        <div>
-            <div class="text-xs font-mono text-gold-400 uppercase tracking-widest mb-1">COMMAND CONSOLE</div>
-            <h1 class="text-3xl font-black text-white uppercase">RECRUITMENT APPLICATION TRIAGE</h1>
+    <!-- HEADER STATS -->
+    <div class="flex justify-between items-center p-4 rounded-xl bg-[#090b10] border border-white/5">
+        <div class="text-xs font-mono text-zinc-400">
+            TOTAL APPLICANTS: <strong class="text-white">{{ $applications->count() }}</strong>
+            <span class="text-zinc-600 mx-2">|</span>
+            PENDING TRIAGE: <strong class="text-amber-400">{{ $applications->where('status', 'pending')->count() }}</strong>
+            <span class="text-zinc-600 mx-2">|</span>
+            ACCEPTED TRIAL: <strong class="text-emerald-400">{{ $applications->where('status', 'accepted_trial')->count() }}</strong>
         </div>
-        <span class="text-xs font-mono text-zinc-400">TOTAL APPLICANTS: {{ $applications->count() }}</span>
     </div>
 
     <!-- APPLICATIONS TABLE / CARDS -->

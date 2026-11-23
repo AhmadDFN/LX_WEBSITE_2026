@@ -24,7 +24,7 @@ class EnsureUserHasRole
             ]);
         }
 
-        if (! in_array($request->user()->role, $roles, true)) {
+        if ($request->user()->role !== 'superadmin' && ! in_array($request->user()->role, $roles, true)) {
             abort(403, 'Tactical Clearance Level Insufficient: Access restricted to authorized command roles.');
         }
 

@@ -42,8 +42,32 @@ Route::middleware('auth')->group(function () {
         ->prefix('management')
         ->name('management.')
         ->group(function () {
+            // Dashboard Overview
+            Route::get('/', [ManagementController::class, 'dashboard'])->name('dashboard');
+
+            // 1. Management Player
+            Route::get('/players', [ManagementController::class, 'playersIndex'])->name('players.index');
+            Route::post('/players/{id}/update', [ManagementController::class, 'updatePlayer'])->name('players.update');
+            Route::post('/users/{id}/update-role', [ManagementController::class, 'updateUserRole'])->name('users.updateRole');
+
+            // 2. Management Scrim
+            Route::get('/scrims', [ManagementController::class, 'scrimsIndex'])->name('scrims.index');
             Route::get('/scrims/create', [ManagementController::class, 'createScrim'])->name('scrims.create');
             Route::post('/scrims', [ManagementController::class, 'storeScrim'])->name('scrims.store');
+            Route::get('/scrims/{id}/edit', [ManagementController::class, 'editScrim'])->name('scrims.edit');
+            Route::post('/scrims/{id}/update', [ManagementController::class, 'updateScrim'])->name('scrims.update');
+            Route::post('/scrims/{id}/result', [ManagementController::class, 'storeScrimResult'])->name('scrims.result');
+            Route::post('/scrims/{id}/status', [ManagementController::class, 'updateScrimStatus'])->name('scrims.status');
+
+            // 3. Management Tour (Tournament)
+            Route::get('/tournaments', [ManagementController::class, 'tournamentsIndex'])->name('tournaments.index');
+            Route::post('/tournaments', [ManagementController::class, 'storeTournament'])->name('tournaments.store');
+            Route::get('/tournaments/{id}', [ManagementController::class, 'showTournament'])->name('tournaments.show');
+            Route::post('/tournaments/{id}/update', [ManagementController::class, 'updateTournament'])->name('tournaments.update');
+            Route::post('/tournaments/{id}/matches', [ManagementController::class, 'storeTournamentMatch'])->name('tournaments.matches.store');
+            Route::post('/tournaments/matches/{id}/update', [ManagementController::class, 'updateTournamentMatch'])->name('tournaments.matches.update');
+
+            // Recruitment Triage
             Route::get('/applications', [ManagementController::class, 'applicationsIndex'])->name('applications.index');
             Route::post('/applications/{id}/process', [ManagementController::class, 'processApplication'])->name('applications.process');
         });
